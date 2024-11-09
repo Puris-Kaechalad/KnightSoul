@@ -1,0 +1,116 @@
+@startuml
+
+class MainFrame {
+  +static JPanel currentPanel
+  +main(String[] args)
+}
+
+class HomePage extends JPanel {
+  -Image backgroundImage
+  -Image logoImage
+  -Image characterImage
+  +HomePage()
+  -void SwipFrame()
+  +paintComponent(Graphics g)
+}
+
+class Game extends JPanel {
+  -double playerHp
+  -double playerShield
+  -int botHp
+  -int botShield
+  -StateCtrl gameState
+  -JLabel playerHpBar
+  -JLabel playerShieldBar
+  -JLabel botHpBar
+  -JLabel botShieldBar
+  -JLabel stateLabel
+  -MovingObject attackAnimation
+  -MovingObject botAttackAnimation
+  -int playerPosX
+  -int botPosX
+  -boolean isGameOver
+  -boolean isBotRespawning
+  +Game()
+  -JPanel createTopPanel()
+  -JPanel createBottomPanel()
+  -void updateStats()
+  +void botAttackAfterDelay()
+  +void playerAttacked(double amount)
+  +void playerHealing(double amount)
+  +void playerShieldUp(double amount)
+  +void botAttacked(double amount)
+  -void checkCharacterStatus()
+  -void respawnBotAfterDelay()
+  -void respawnBot()
+  -void playerDied()
+  -void returnToMainMenuAfterDelay()
+  -void returnToMainMenu()
+  +paintComponent(Graphics g)
+}
+
+class MatchBox extends JPanel {
+  -Game game
+  -int rows
+  -int cols
+  -int selectRow
+  -int selectCol
+  -int panelSize
+  -Tile[][] box
+  +MatchBox(Game game)
+  -void drawMatchBox()
+  -boolean isStreak(int row, int col)
+  -void handleTileClick(int row, int col)
+  -boolean checkPosition(int row, int col)
+  -void swapTiles(int row1, int col1, int row2, int col2)
+  -void checkForMatches()
+  -void refill()
+  -void checkAndRefill()
+  +void applyMatchEffect(int iconType)
+  +paintComponent(Graphics g)
+}
+
+class Tile {
+  -static String iconPath
+  -static String[] icon
+  -Image iconImage
+  -int iconType
+  +Tile(int keyword)
+  +Image getIcon()
+  +int getIconType()
+  +Image setIcon(int keyword)
+  +void draw(Graphics g, int x, int y, int size)
+}
+
+class MovingObject extends Thread {
+  -int xStart
+  -int yStart
+  -int xEnd
+  -int yEnd
+  -int tempStart
+  -boolean isRunning
+  -boolean condition
+  -Game game
+  +MovingObject(Game game, int xStart, int xEnd)
+  +run()
+  -void moveTo(int targetPosition)
+  +boolean isRunning()
+  +void stopRun()
+  +int getX()
+}
+
+class StateCtrl {
+  -int stageCount
+  +StateCtrl()
+  +void increaseStage()
+  +int getStageCount()
+}
+
+MainFrame -[#black]-> HomePage : uses
+HomePage -[#black]-> Game : uses
+Game -[#black]> MatchBox : composition
+Game o--> StateCtrl : composition
+Game *--> MovingObject : uses
+MatchBox *--> Tile : composition
+MovingObject o--> Game : composition
+@enduml
